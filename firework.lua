@@ -1,10 +1,18 @@
+-- Base class for all projectiles in the game: regular rockets, "wondertol", anything else?
 Firework = Object:extend()
 
 FIREWORKS_SPEED = 750
 
-function Firework:new(x, y, angle)
-  self.width = 50
-  self.height = 20
+function Firework:new(x, y, z, angle)
+  if z <= 10 then
+    self.z = 0
+    self.width = 50
+    self.height = 20
+  else
+    self.width = 70
+    self.height = 28
+    self.z = z
+  end
   
   self.x = x + math.cos(angle)*(100-self.width*0.5)
   self.y = y + math.sin(angle)*(100-self.height*0.5)
@@ -14,8 +22,9 @@ function Firework:new(x, y, angle)
 
   self.angle = angle
   self.acceleration = 0
-  self.speedX = FIREWORKS_SPEED*math.cos(angle)
-  self.speedY = FIREWORKS_SPEED*math.sin(angle)
+  self.speed = math.prandom(FIREWORKS_SPEED*0.6, FIREWORKS_SPEED)
+  self.speedX = self.speed*math.cos(angle)
+  self.speedY = self.speed*math.sin(angle)
   
   self.hitCounter = 0
   self.isDead = false
@@ -31,8 +40,8 @@ function Firework:update(dt)
   end
   
   -- actually move firework
-  self.speedX = FIREWORKS_SPEED*math.cos(self.angle)
-  self.speedY = FIREWORKS_SPEED*math.sin(self.angle)
+  self.speedX = self.speed*math.cos(self.angle)
+  self.speedY = self.speed*math.sin(self.angle)
 
   -- move in x and y directions
   -- bounce off the edges
@@ -52,9 +61,13 @@ function Firework:update(dt)
   
   -- kill if it has hit something 3 times
   if self.hitCounter >= 3 then
-    self.isDead = true
+    self:Kill()
   end
   
+end
+
+function Firework:Kill()
+  self.isDead = true
 end
 
 function Firework:resetDirection()
@@ -67,10 +80,11 @@ end
 function Firework:draw()
   love.graphics.push()
   
-  love.graphics.setColor(0, 255, 0, 180)
   love.graphics.translate(self.x+self.width*0.5, self.y+self.height*0.5)
   love.graphics.rotate(self.angle)
   love.graphics.translate(-(self.x+self.width*0.5), -(self.y+self.height*0.5))
+  
+  love.graphics.setColor(0, 255, 0, 180)
   love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
   
   love.graphics.pop()

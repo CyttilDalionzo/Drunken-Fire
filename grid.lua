@@ -1,9 +1,11 @@
+-- The underlying grid. 
+-- I made it into a class to keep the main file clean, and because I don't know if I want to do stuff with it in the future
 Grid = Object:extend()
 
 CELL_SIZE = nil
 WINDOW_WIDTH = nil
-LEVEL_WIDTH = 12
-LEVEL_HEIGHT = 8
+LEVEL_WIDTH = 24
+LEVEL_HEIGHT = 16
 
 function Grid:new()
   WINDOW_WIDTH = love.graphics.getWidth()
