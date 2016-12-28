@@ -4,8 +4,8 @@ Grid = Object:extend()
 
 CELL_SIZE = nil
 WINDOW_WIDTH = nil
-LEVEL_WIDTH = 24
-LEVEL_HEIGHT = 16
+LEVEL_WIDTH = 48
+LEVEL_HEIGHT = 32
 
 function Grid:new()
   WINDOW_WIDTH = love.graphics.getWidth()
