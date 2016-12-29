@@ -30,7 +30,7 @@ function Actor:new(x, y, width, height, health)
   self.angle = 0
   self.direction = 1
   self.loadShot = false
-  self.fireworkColor = {0,0,255,180}
+  self.fireworkColor = {80, 80, 80,180}
   
   self.moveX = 0
   self.moveY = 0
@@ -40,6 +40,17 @@ function Actor:new(x, y, width, height, health)
   self.wobble = false
   self.wobbleCounter = 0
   self.effectCounter = 0
+  
+  -- these are all properties of the enemy, which is why I should probably put them in the enemy constructor function
+  self.enemy = true
+  self.fireworkOnLevel = false
+  self.fireworkNotOnLevel = false
+  self.fireworkSideX = 0
+  self.fireworkSideY = 0
+  self.fireworkClose = false
+  self.strength = math.round(math.prandom(1,10))
+  self.myTarget = nil
+  self.timeLastShot = 0
 end
 
 function Actor:update(dt)    
@@ -105,6 +116,15 @@ function Actor:update(dt)
     
     -- rotate player if k is being pressed
     self.angle = self.angle + self.direction*0.5*ROTATING_SPEED
+    
+    -- keep angle within range
+    if self.angle >= 2*math.pi then
+      self.angle = self.angle - 2*math.pi
+    elseif self.angle < 0 then
+      self.angle = self.angle + 2*math.pi
+    end
+      
+    -- SHOOTING FIREWORKS
     if self.shootF == 1 then
       self.angle = self.angle + self.direction*ROTATING_SPEED
       self.loadShot = true
@@ -119,7 +139,7 @@ function Actor:update(dt)
     end
     
     -- dust clouds!
-    if (self.moveX ~= 0 or self.moveY ~= 0) and self.z == 0 then
+    if (self.moveX ~= 0 or self.moveY ~= 0) and self.z <= 0 then
       self.effectCounter = self.effectCounter + dt
       if self.effectCounter > 0.05 then
         table.insert(dustTable, Dust(self.x+self.width*0.5, self.y+self.height*0.5, self.angle, self.height))

@@ -6,6 +6,7 @@ function Player:new(x, y, width, height, controlNum, health)
   Player.super.new(self, x, y, width, height, health)
   
   self.controls = CONTROLS[controlNum]
+  self.enemy = false
   
   if controlNum == 1 then
     self.baseColor = {50,100,255,255}

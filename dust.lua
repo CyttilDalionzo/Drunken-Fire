@@ -23,10 +23,5 @@ function Dust:draw()
   self.size = self.size*0.97
   self.opacity = self.opacity*0.97
   
-  -- remove dust particle if it's invisible (enough)
-  if self.opacity <= 0.001 then
-    table.remove(dustTable, i)
-  end
-  
   love.graphics.pop()
 end
