@@ -37,3 +37,13 @@ function love.keyreleased(key)
   end
 end
 --]]
+
+
+    --[[ Something with staying away from edges
+    if math.abs(self.angle) < 0.5*math.pi and self.x > WINDOW_WIDTH-170 or
+       math.abs(self.angle-0.5*math.pi) < 0.5*math.pi and self.y > WINDOW_HEIGHT-170 or
+       math.abs(self.angle-math.pi) < 0.5*math.pi and self.x < 170 or
+       math.abs(self.angle-1.5*math.pi) < 0.5*math.pi and self.y < 170 then
+         self.shootF = 0
+    end
+    --]]

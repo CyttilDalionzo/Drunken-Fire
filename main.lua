@@ -32,6 +32,9 @@ function love.load()
   -- dust clouds
   require "dust"
   
+  -- powerups
+  require "powerups"
+  
   -- some other graphical thingies
   love.graphics.setBackgroundColor(255,255,255)
   
@@ -67,12 +70,14 @@ function GAME_STATES.mainGameInit()
   playersTable = {}
   explosionsTable = {}
   dustTable = {}
+  powerupsTable = {}
   
   PLAYER_SIZE = CELL_SIZE
   BLOCK_SIZE = CELL_SIZE*0.5
   
   GAME_RESULT = nil
   whoIsDead = 0
+  powerupCounter = 0
   
   MULTIPLAYER = multiCheck.checked
   TEAMS = teamCheck.checked
@@ -157,6 +162,15 @@ function GAME_STATES.mainGame(dt)
   -- update the player(s)
   for i,p in ipairs(playersTable) do
     p:update(dt)
+    
+    -- collide with powerups  
+    for k, powerUp in ipairs(powerupsTable) do
+      if CheckCollisionPlayer(p.centerX, p.centerY, powerUp.x, powerUp.y, powerUp.radius+p.width*0.5) then
+        table.remove(powerupsTable, k)
+        -- do something based on powerUp type
+      end
+    end
+    
     if p.enemy then
       p.lockDirection = {0,0}
       for j,e in ipairs(playersTable) do
@@ -195,6 +209,13 @@ function GAME_STATES.mainGame(dt)
     if dustTable[i].opacity <= 0.002 then
       table.remove(dustTable, i)
     end
+  end
+  
+  -- Oh no, a random powerup appeared in the tall grass!
+  powerupCounter = powerupCounter + dt
+  if powerupCounter >= 8 then
+    table.insert(powerupsTable, Powerup(WINDOW_WIDTH*math.random(), WINDOW_HEIGHT*math.random(), math.round(math.prandom(0,7))))
+    powerupCounter = 0
   end
   
   -- GAME OVER CONDITIONS
@@ -256,6 +277,11 @@ function GAME_STATES.mainGameDraw()
   -- draw all explosions
   for i=1,#explosionsTable do
     explosionsTable[i]:draw()
+  end
+  
+  -- draw all powerups
+  for i=1,#powerupsTable do
+    powerupsTable[i]:draw()
   end
   
   love.graphics.setColor(100, 100, 100)
