@@ -3,7 +3,7 @@ Firework = Object:extend()
 
 FIREWORKS_SPEED = 375
 
-function Firework:new(x, y, z, angle, color)
+function Firework:new(x, y, z, angle, color, owner)
   if z <= 10 then
     self.z = 0
     self.width = 25
@@ -33,6 +33,8 @@ function Firework:new(x, y, z, angle, color)
   
   self.color = color
   self.effectCounter = 0
+  
+  self.owner = owner
 end
 
 function Firework:update(dt)

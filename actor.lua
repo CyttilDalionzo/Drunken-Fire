@@ -16,15 +16,18 @@ function Actor:new(x, y, width, height, health)
   
   self.initialWidth = width
   self.width = width
+  self.centerX = self.x + self.width*0.5
   
   self.initialHeight = height
   self.height = height
+  self.centerY = self.y + self.height*0.5
   
   self.speedX = 0
   self.speedY = 0
   self.speedZ = 0
   
   self.health = health
+  self.isDead = false
   
   self.baseColor = {80,80,80,255}
   self.angle = 0
@@ -41,16 +44,9 @@ function Actor:new(x, y, width, height, health)
   self.wobbleCounter = 0
   self.effectCounter = 0
   
-  -- these are all properties of the enemy, which is why I should probably put them in the enemy constructor function
-  self.enemy = true
-  self.fireworkOnLevel = false
-  self.fireworkNotOnLevel = false
-  self.fireworkSideX = 0
-  self.fireworkSideY = 0
-  self.fireworkClose = false
-  self.strength = math.round(math.prandom(1,10))
-  self.myTarget = nil
-  self.timeLastShot = 0
+  self.enemy = false
+  GLOBAL_ID = GLOBAL_ID + 1
+  self.id = GLOBAL_ID
 end
 
 function Actor:update(dt)    
@@ -77,6 +73,7 @@ function Actor:update(dt)
     end
     
     self.x = math.clamp(self.x + self.speedX * dt, 0, WINDOW_WIDTH-self.width)
+    self.centerX = self.x + self.width*0.5
     -- horizontal bouncing
     if self.x <= 0 or (self.x >= WINDOW_WIDTH-self.width) then
       self.speedX = self.speedX * -15
@@ -93,6 +90,7 @@ function Actor:update(dt)
     -- limit speed, and don't let player move off the game field
     self.speedY = math.clamp(self.speedY, -MAX_WALKING_SPEED, MAX_WALKING_SPEED)
     self.y = math.clamp(self.y + self.speedY * dt, 0, WINDOW_HEIGHT-self.height)
+    self.centerY = self.y + self.height*0.5
     -- vertical bouncing
     if self.y <= 0 or self.y >= (WINDOW_HEIGHT-self.height) then
       self.speedY = self.speedY * -15
@@ -131,7 +129,7 @@ function Actor:update(dt)
     -- the first frame after k has been released, shoot fireworks!
     elseif self.loadShot == true then
       self.loadShot = false
-      table.insert(fireworksTable, Firework(self.x+self.width*0.5, self.y+self.height*0.5, self.z, self.angle, self.fireworkColor))
+      table.insert(fireworksTable, Firework(self.x+self.width*0.5, self.y+self.height*0.5, self.z, self.angle, self.fireworkColor, self.id))
       -- once in a while, change direction
       if math.random() > 0.5 then
         self.direction = self.direction * -1
@@ -172,7 +170,7 @@ function Actor:ChangeHealth(n)
   self.health = self.health + n
   self.wobble = true
   if self.health <= 0 then
-    print("Should Die")
+    self.isDead = true
   end
 end
 

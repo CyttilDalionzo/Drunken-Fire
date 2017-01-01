@@ -1,8 +1,6 @@
 -- Objects that will handle explosions
 Explosion = Object:extend()
 
-BLOCK_SIZE = CELL_SIZE*0.5
-
 function Explosion:new(x, y)
   self.x = x
   self.y = y

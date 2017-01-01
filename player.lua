@@ -6,6 +6,7 @@ function Player:new(x, y, width, height, controlNum, health)
   Player.super.new(self, x, y, width, height, health)
   
   self.controls = CONTROLS[controlNum]
+  self.controlNum = controlNum
   self.enemy = false
   
   if controlNum == 1 then
@@ -14,6 +15,10 @@ function Player:new(x, y, width, height, controlNum, health)
   elseif controlNum == 2 then
     self.baseColor = {0,180,0,255}
     self.fireworkColor = {0, 255, 0, 180}
+  end
+  
+  if TEAMS then
+    self.id = 0
   end
   
 end

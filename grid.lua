@@ -3,13 +3,10 @@
 Grid = Object:extend()
 
 CELL_SIZE = nil
-WINDOW_WIDTH = nil
 LEVEL_WIDTH = 48
 LEVEL_HEIGHT = 32
 
 function Grid:new()
-  WINDOW_WIDTH = love.graphics.getWidth()
-  WINDOW_HEIGHT = love.graphics.getHeight()
   CELL_SIZE = WINDOW_WIDTH/LEVEL_WIDTH
 end
 
