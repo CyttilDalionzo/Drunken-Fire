@@ -3,7 +3,7 @@ Firework = Object:extend()
 
 FIREWORKS_SPEED = 375
 
-function Firework:new(x, y, z, angle, color, owner)
+function Firework:new(x, y, z, angle, color, owner, extraSpeed)
   if z <= 10 then
     self.z = 0
     self.width = 25
@@ -24,7 +24,7 @@ function Firework:new(x, y, z, angle, color, owner)
 
   self.angle = angle
   self.acceleration = 0
-  self.speed = math.prandom(FIREWORKS_SPEED*0.6, FIREWORKS_SPEED)
+  self.speed = math.prandom((FIREWORKS_SPEED+extraSpeed)*0.6, FIREWORKS_SPEED+extraSpeed)
   self.speedX = self.speed*math.cos(angle)
   self.speedY = self.speed*math.sin(angle)
   

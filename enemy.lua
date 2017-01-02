@@ -83,7 +83,7 @@ function Enemy:update(dt)
       end
       
       -- when the angle is right, SHOOT! MUWHAHAH!
-      if math.abs(self.angle - CalculateAngle(targ.x, targ.y, self.x, self.y)) < 0.15*math.pi and self.timeLastShot > (-0.33*self.strength + 4.33) then
+      if math.abs(self.angle - CalculateAngle(targ.x, targ.y, self.x, self.y)) < 0.15*math.pi and self.timeLastShot > (-0.0625*self.strength + 1.125) then
         self.shootF = 0
         self.loadShot = true
         self.myTarget = nil

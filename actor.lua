@@ -43,10 +43,17 @@ function Actor:new(x, y, width, height, health)
   self.wobble = false
   self.wobbleCounter = 0
   self.effectCounter = 0
-  
+    
   self.enemy = false
   GLOBAL_ID = GLOBAL_ID + 1
   self.id = GLOBAL_ID
+  
+  -- powerup variables
+  self.poFireworkSpeed = 0
+  self.poSpeed = 0
+  self.poRotation = 0
+  self.poWeapon = 0
+  self.poJump = true
 end
 
 function Actor:update(dt)    
@@ -59,7 +66,7 @@ function Actor:update(dt)
       self.speedX = self.speedX * DAMPING
     end
     -- limit speed, and don't let player move off the game field
-    self.speedX = math.clamp(self.speedX, -MAX_WALKING_SPEED, MAX_WALKING_SPEED)
+    self.speedX = math.clamp(self.speedX, -MAX_WALKING_SPEED-self.poSpeed, MAX_WALKING_SPEED+self.poSpeed)
     
     -- wobble movement when the player is hit
     if self.wobble then
@@ -88,7 +95,7 @@ function Actor:update(dt)
       self.speedY = self.speedY * DAMPING
     end
     -- limit speed, and don't let player move off the game field
-    self.speedY = math.clamp(self.speedY, -MAX_WALKING_SPEED, MAX_WALKING_SPEED)
+    self.speedY = math.clamp(self.speedY, -MAX_WALKING_SPEED-self.poSpeed, MAX_WALKING_SPEED+self.poSpeed)
     self.y = math.clamp(self.y + self.speedY * dt, 0, WINDOW_HEIGHT-self.height)
     self.centerY = self.y + self.height*0.5
     -- vertical bouncing
@@ -98,7 +105,7 @@ function Actor:update(dt)
     
     -- jumping movement; only allowed to jump when on the floor
     if self.z == 0 then
-      if self.moveZ == 1 then
+      if self.moveZ == 1 and self.poJump then
         self.speedZ = JUMP_SPEED
       end
       self.color = self.baseColor
@@ -113,7 +120,7 @@ function Actor:update(dt)
     self.height = self.initialHeight + self.z
     
     -- rotate player if k is being pressed
-    self.angle = self.angle + self.direction*0.5*ROTATING_SPEED
+    self.angle = self.angle + self.direction*0.5*(ROTATING_SPEED+self.poRotation)
     
     -- keep angle within range
     if self.angle >= 2*math.pi then
@@ -124,12 +131,17 @@ function Actor:update(dt)
       
     -- SHOOTING FIREWORKS
     if self.shootF == 1 then
-      self.angle = self.angle + self.direction*ROTATING_SPEED
+      self.angle = self.angle + self.direction*(ROTATING_SPEED+self.poRotation)
       self.loadShot = true
     -- the first frame after k has been released, shoot fireworks!
     elseif self.loadShot == true then
       self.loadShot = false
-      table.insert(fireworksTable, Firework(self.x+self.width*0.5, self.y+self.height*0.5, self.z, self.angle, self.fireworkColor, self.id))
+      -- what happens depends on the weapon the player is holding
+      if self.poWeapon == 0 then
+        table.insert(fireworksTable, Firework(self.x+self.width*0.5, self.y+self.height*0.5, self.z, self.angle, self.fireworkColor, self.id, self.poFireworkSpeed))
+      elseif self.poWeapon == 1 then
+        table.insert(bombsTable, Bomb(self.x, self.y, self.fireworkColor, self.id))
+      end
       -- once in a while, change direction
       if math.random() > 0.5 then
         self.direction = self.direction * -1
