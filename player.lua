@@ -9,9 +9,6 @@ function Player:new(x, y, width, height, controlNum, health)
   self.controlNum = controlNum
   self.enemy = false
   
-  -- for debugging purposes!!!!
-  self.poWeapon = 1
-  
   if controlNum == 1 then
     self.baseColor = {50,100,255,255}
     self.fireworkColor = {50, 100, 255, 180}

@@ -47,6 +47,7 @@ function Actor:new(x, y, width, height, health)
   self.enemy = false
   GLOBAL_ID = GLOBAL_ID + 1
   self.id = GLOBAL_ID
+  self.uniqueID = GLOBAL_ID
   
   -- powerup variables
   self.poFireworkSpeed = 0
@@ -54,6 +55,7 @@ function Actor:new(x, y, width, height, health)
   self.poRotation = 0
   self.poWeapon = 0
   self.poJump = true
+  self.bombingAllowed = true
 end
 
 function Actor:update(dt)    
@@ -139,8 +141,9 @@ function Actor:update(dt)
       -- what happens depends on the weapon the player is holding
       if self.poWeapon == 0 then
         table.insert(fireworksTable, Firework(self.x+self.width*0.5, self.y+self.height*0.5, self.z, self.angle, self.fireworkColor, self.id, self.poFireworkSpeed))
-      elseif self.poWeapon == 1 then
-        table.insert(bombsTable, Bomb(self.x, self.y, self.fireworkColor, self.id))
+      elseif self.poWeapon == 1 and self.bombingAllowed then
+        self.bombingAllowed = false
+        table.insert(bombsTable, Bomb(self.x, self.y, self.fireworkColor, self.id, self.uniqueID, self.angle))
       end
       -- once in a while, change direction
       if math.random() > 0.5 then
@@ -181,6 +184,7 @@ end
 function Actor:ChangeHealth(n)
   self.health = self.health + n
   self.wobble = true
+  shakyCanvas = -1
   if self.health <= 0 then
     self.isDead = true
   end

@@ -16,6 +16,7 @@ function GAME_STATES.mainGameInit()
   GAME_RESULT = nil
   whoIsDead = 0
   powerupCounter = 0
+  shakyCanvas = -2
   
   MULTIPLAYER = multiCheck.checked
   TEAMS = teamCheck.checked
@@ -93,7 +94,7 @@ function GAME_STATES.mainGame(dt)
     if b.isDead then
       table.remove(bombsTable, i)
     else
-      b:ChangeTimer(dt)
+      b:update(dt)
     end
   end
   
@@ -128,9 +129,11 @@ function GAME_STATES.mainGame(dt)
         elseif poType == 5 then
           p.poFireworkSpeed = p.poFireworkSpeed + FIREWORKS_SPEED*0.2
         elseif poType == 6 then
-          p.poWeapon = math.round(math.random())
+          -- Weapon 0 becomes 1, and weapon 1 becomes 0
+          p.poWeapon = (p.poWeapon+1)%2
         elseif poType == 7 then
-          p.poJump = false
+          -- True becomes false, false becomes true
+          p.poJump = (p.poJump ~= true)
         elseif poType == 8 then
           p:ChangeHealth(1)
         end
@@ -141,7 +144,7 @@ function GAME_STATES.mainGame(dt)
     -- Collide with bombs
     for i,b in ipairs(bombsTable) do
       if b.isDead and CheckCollisionPlayer(p.centerX, p.centerY, b.x, b.y, p.width+b.bombHitRadius) and p.id ~= b.owner then
-        p:ChangeHealth(-1)
+        p:ChangeHealth(-2)
       end
     end
     
@@ -216,10 +219,28 @@ function GAME_STATES.mainGame(dt)
   if GAME_RESULT ~= nil then
     switchGameState("gameOver")
   end
-
+  
+  -- for shaky canvas
+  if shakyCanvas > 0 then
+    shakyCanvas = shakyCanvas - dt
+  end
 end
 
 function GAME_STATES.mainGameDraw()
+  -- shaking canvas special effect
+  -- Intial state (-1): Save "normal" canvas translation, start shaking
+  -- Shaky mode (0): Translate complete canvas randomly in X and Y direction
+  -- Stop shaking (<0): Return to "normal" canvas translation, stop shaking
+  if shakyCanvas == -1 then
+    love.graphics.push()
+    shakyCanvas = 0.25
+  elseif shakyCanvas > 0 then
+    love.graphics.translate(math.prandom(-5,5), math.prandom(-5,5))
+  elseif shakyCanvas <= 0 and shakyCanvas > -1 then
+    love.graphics.pop()
+    shakyCanvas = -2
+  end
+  
   -- draw the main grid
   main_grid:draw()
   

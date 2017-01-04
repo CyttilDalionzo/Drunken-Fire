@@ -3,7 +3,7 @@ CURRENT_STATE = nil
 suit = require "suit"
 multiCheck = {text = "Multiplayer"}
 teamCheck = {text = "Teams?"}
-enemySlider = {value = 2, min = 0, max = 10}
+enemySlider = {value = 2, min = 0, max = 20}
 
 suit.theme.color = {
     normal  = {bg = { 66, 66, 66}, fg = {100,100,100}},
